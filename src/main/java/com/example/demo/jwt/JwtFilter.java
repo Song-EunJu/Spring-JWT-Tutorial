@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class JwtFilter extends GenericFilterBean {
     private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
-    private static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
     private TokenProvider tokenProvider;
 
     public JwtFilter(TokenProvider tokenProvider) {
@@ -39,12 +39,13 @@ public class JwtFilter extends GenericFilterBean {
         else {
             logger.debug("유효한 JWT 토큰이 없습니다, uri: {}", requestURI);
         }
+        chain.doFilter(request, response);
     }
 
     // request header에서 토큰 정보를 꺼내오기 위한 메소드
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
